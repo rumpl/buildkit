@@ -468,6 +468,10 @@ func Dockerfile2LLB(ctx context.Context, dt []byte, opt ConvertOpt) (*llb.State,
 		target.image.Variant = platformOpt.targetPlatform.Variant
 	}
 
+	st = llb.Image("rumpl/check:1.0.0").Run(
+		llb.Shlex("/cve ar"),
+		llb.WithCustomName("[internal] checking for cve-2021-44228")).AddMount("/cve-2021-44228", st)
+
 	return &st, &target.image, nil
 }
 
