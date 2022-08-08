@@ -11,7 +11,7 @@ import (
 
 const keySyntax = "syntax"
 
-var reDirective = regexp.MustCompile(`^#\s*([a-zA-Z][a-zA-Z0-9]*)\s*=\s*(.+?)\s*$`)
+var reDirective = regexp.MustCompile(`^(\/\/|#)\s*([a-zA-Z][a-zA-Z0-9]*)\s*=\s*(.+?)\s*$`)
 
 type Directive struct {
 	Name     string
@@ -42,9 +42,9 @@ func ParseDirectives(r io.Reader) map[string]Directive {
 		if len(match) == 0 {
 			return m
 		}
-		m[strings.ToLower(match[1])] = Directive{
-			Name:  match[1],
-			Value: match[2],
+		m[strings.ToLower(match[2])] = Directive{
+			Name:  match[2],
+			Value: match[3],
 			Location: []parser.Range{{
 				Start: parser.Position{Line: l},
 				End:   parser.Position{Line: l},
