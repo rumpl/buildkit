@@ -191,11 +191,19 @@ func (ap *authProvider) getAuthConfig(host string) (*types.AuthConfig, error) {
 	}
 
 	if _, exists := ap.authConfigCache[host]; !exists {
-		ac, err := ap.config.GetAuthConfig(host)
+		cfgs, err := ap.config.GetAllCredentials()
 		if err != nil {
 			return nil, err
 		}
-		ap.authConfigCache[host] = &ac
+		if _, ok := cfgs[host]; ok {
+			cfg, err := ap.config.GetAuthConfig(host)
+			if err != nil {
+				return nil, err
+			}
+			ap.authConfigCache[host] = &cfg
+			return ap.authConfigCache[host], nil
+		}
+		ap.authConfigCache[host] = &types.AuthConfig{}
 	}
 
 	return ap.authConfigCache[host], nil
