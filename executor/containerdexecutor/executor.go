@@ -2,6 +2,7 @@ package containerdexecutor
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -61,6 +62,15 @@ type RuntimeInfo struct {
 
 // New creates a new executor backed by connection to containerd API
 func New(client *containerd.Client, root, cgroup string, networkProviders map[pb.NetMode]network.Provider, dnsConfig *oci.DNSConfig, apparmorProfile string, selinux bool, traceSocket string, rootless bool, runtime *RuntimeInfo) executor.Executor {
+	fmt.Println("CONTAINERD EXECUTOR NEW")
+	fmt.Println("CONTAINERD EXECUTOR NEW")
+	fmt.Println("CONTAINERD EXECUTOR NEW")
+	fmt.Println("CONTAINERD EXECUTOR NEW")
+	fmt.Println("CONTAINERD EXECUTOR NEW")
+	fmt.Println("CONTAINERD EXECUTOR NEW")
+	fmt.Println("CONTAINERD EXECUTOR NEW")
+	fmt.Println("CONTAINERD EXECUTOR NEW")
+	fmt.Println("CONTAINERD EXECUTOR NEW")
 	// clean up old hosts/resolv.conf file. ignore errors
 	os.RemoveAll(filepath.Join(root, "hosts"))
 	os.RemoveAll(filepath.Join(root, "resolv.conf"))
@@ -91,6 +101,16 @@ type containerState struct {
 }
 
 func (w *containerdExecutor) Run(ctx context.Context, id string, root executor.Mount, mounts []executor.Mount, process executor.ProcessInfo, started chan<- struct{}) (rec resourcestypes.Recorder, err error) {
+	fmt.Println("RUN URN UNR NURN URN UNR ")
+	fmt.Println("RUN URN UNR NURN URN UNR ")
+	fmt.Println("RUN URN UNR NURN URN UNR ")
+	fmt.Println("RUN URN UNR NURN URN UNR ")
+	fmt.Println("RUN URN UNR NURN URN UNR ")
+	fmt.Println("RUN URN UNR NURN URN UNR ")
+	fmt.Println("RUN URN UNR NURN URN UNR ")
+	fmt.Println("RUN URN UNR NURN URN UNR ")
+	fmt.Println("RUN URN UNR NURN URN UNR ")
+	fmt.Println("RUN URN UNR NURN URN UNR ")
 	if id == "" {
 		id = identity.NewID()
 	}
@@ -210,6 +230,17 @@ func (w *containerdExecutor) Run(ctx context.Context, id string, root executor.M
 }
 
 func (w *containerdExecutor) Exec(ctx context.Context, id string, process executor.ProcessInfo) (err error) {
+	fmt.Println("EXEC EXEC EXEC EXEC ")
+	fmt.Println("EXEC EXEC EXEC EXEC ")
+	fmt.Println("EXEC EXEC EXEC EXEC ")
+	fmt.Println("EXEC EXEC EXEC EXEC ")
+	fmt.Println("EXEC EXEC EXEC EXEC ")
+	fmt.Println("EXEC EXEC EXEC EXEC ")
+	fmt.Println("EXEC EXEC EXEC EXEC ")
+	fmt.Println("EXEC EXEC EXEC EXEC ")
+	fmt.Println("EXEC EXEC EXEC EXEC ")
+	fmt.Println("EXEC EXEC EXEC EXEC ")
+	fmt.Println("EXEC EXEC EXEC EXEC ")
 	meta := process.Meta
 
 	// first verify the container is running, if we get an error assume the container
@@ -307,6 +338,14 @@ func fixProcessOutput(process *executor.ProcessInfo) {
 }
 
 func (w *containerdExecutor) runProcess(ctx context.Context, p containerd.Process, resize <-chan executor.WinSize, signal <-chan syscall.Signal, started func()) error {
+	fmt.Println("RUN PROCESS RUN PROCESS RUN PROCESS ")
+	fmt.Println("RUN PROCESS RUN PROCESS RUN PROCESS ")
+	fmt.Println("RUN PROCESS RUN PROCESS RUN PROCESS ")
+	fmt.Println("RUN PROCESS RUN PROCESS RUN PROCESS ")
+	fmt.Println("RUN PROCESS RUN PROCESS RUN PROCESS ")
+	fmt.Println("RUN PROCESS RUN PROCESS RUN PROCESS ")
+	fmt.Println("RUN PROCESS RUN PROCESS RUN PROCESS ")
+	fmt.Println("RUN PROCESS RUN PROCESS RUN PROCESS ")
 	// Not using `ctx` here because the context passed only affects the statusCh which we
 	// don't want cancelled when ctx.Done is sent.  We want to process statusCh on cancel.
 	statusCh, err := p.Wait(context.Background())

@@ -158,6 +158,7 @@ func (f *fileOp) CacheMap(ctx context.Context, g session.Group, index int) (*sol
 }
 
 func (f *fileOp) Exec(ctx context.Context, g session.Group, inputs []solver.Result) ([]solver.Result, error) {
+	fmt.Println("FILEOP EXEC")
 	inpRefs := make([]fileoptypes.Ref, 0, len(inputs))
 	for _, inp := range inputs {
 		workerRef, ok := inp.Sys().(*worker.WorkerRef)
@@ -175,6 +176,7 @@ func (f *fileOp) Exec(ctx context.Context, g session.Group, inputs []solver.Resu
 	fs := NewFileOpSolver(f.w, backend, f.refManager)
 	outs, err := fs.Solve(ctx, inpRefs, f.op.Actions, g)
 	if err != nil {
+		fmt.Println("fs.slolve error")
 		return nil, err
 	}
 
@@ -597,18 +599,22 @@ func (s *FileOpSolver) getInput(ctx context.Context, idx int, inputs []fileoptyp
 				return input{}, err
 			}
 		case *pb.FileAction_Copy:
+			fmt.Println("COPY COPY COPY COPY")
 			if inpMountSecondary == nil {
 				m, err := s.r.Prepare(ctx, nil, true, g)
 				if err != nil {
+					fmt.Println("prepare ugh")
 					return input{}, err
 				}
 				inpMountSecondary = m
 			}
 			user, group, err := loadOwner(ctx, a.Copy.Owner)
 			if err != nil {
+				fmt.Println("load owner ugh")
 				return input{}, err
 			}
 			if err := s.b.Copy(ctx, inpMountSecondary, inpMount, user, group, *a.Copy); err != nil {
+				fmt.Println("s.b.opy error")
 				return input{}, err
 			}
 		default:

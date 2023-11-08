@@ -312,7 +312,7 @@ COPY --link --from=rootlesskit /rootlesskit /usr/bin/
 COPY --link --from=containerd-alt-16 /out/containerd* /opt/containerd-alt-16/bin/
 COPY --link --from=registry /bin/registry /usr/bin/
 COPY --link --from=runc /usr/bin/runc /usr/bin/
-COPY --link --from=containerd /out/containerd* /usr/bin/
+COPY --link --from=containerd /out/* /usr/bin/
 COPY --link --from=cni-plugins /opt/cni/bin/bridge /opt/cni/bin/host-local /opt/cni/bin/loopback /opt/cni/bin/firewall /opt/cni/bin/dnsname /opt/cni/bin/
 COPY --link hack/fixtures/cni.json /etc/buildkit/cni.json
 COPY --link hack/fixtures/dns-cni.conflist /etc/buildkit/dns-cni.conflist

@@ -47,6 +47,7 @@ func (sr *immutableRef) GetRemotes(ctx context.Context, createIfNeeded bool, ref
 		return nil, err
 	}
 	if !all || refCfg.Compression.Force || len(remote.Descriptors) == 0 {
+		fmt.Println("EARLY RETURN")
 		return []*solver.Remote{remote}, nil // early return if compression variants aren't required
 	}
 

@@ -6,6 +6,7 @@ package cache
 import (
 	"bufio"
 	"context"
+	"fmt"
 	"io"
 
 	"github.com/containerd/containerd/content"
@@ -54,6 +55,7 @@ func (sr *immutableRef) tryComputeOverlayBlob(ctx context.Context, lower, upper 
 	bufW := bufio.NewWriterSize(cw, 128*1024)
 	var labels map[string]string
 	if compressorFunc != nil {
+		fmt.Println("COMPRESSION")
 		dgstr := digest.SHA256.Digester()
 		compressed, err := compressorFunc(bufW, mediaType)
 		if err != nil {
@@ -72,6 +74,7 @@ func (sr *immutableRef) tryComputeOverlayBlob(ctx context.Context, lower, upper 
 		}
 		labels[labelspkg.LabelUncompressed] = dgstr.Digest().String()
 	} else {
+		fmt.Println("NO COMPRESSION")
 		if err = overlay.WriteUpperdir(ctx, bufW, upperdir, lower); err != nil {
 			return emptyDesc, false, errors.Wrap(err, "failed to write diff")
 		}

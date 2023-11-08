@@ -2,6 +2,7 @@ package solver
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -908,6 +909,12 @@ func (e *edge) loadCache(ctx context.Context) (interface{}, error) {
 // execOp creates a request to execute the vertex operation
 func (e *edge) execOp(ctx context.Context) (interface{}, error) {
 	cacheKeys, inputs := e.commitOptions()
+	fmt.Println(e.op)
+	fmt.Println(e.op)
+	fmt.Println(e.op)
+	fmt.Println(e.op)
+	fmt.Println(e.op)
+	fmt.Printf("%T\n", e.op)
 	results, subExporters, err := e.op.Exec(ctx, toResultSlice(inputs))
 	if err != nil {
 		return nil, errors.WithStack(err)

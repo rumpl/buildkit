@@ -95,6 +95,7 @@ func computeBlobChain(ctx context.Context, sr *immutableRef, createIfNeeded bool
 					return struct{}{}, errors.WithStack(ErrNoBlobs)
 				}
 
+				fmt.Printf("%T %T\n", comp, comp.Type)
 				compressorFunc, finalize := comp.Type.Compress(ctx, comp)
 				mediaType := comp.Type.MediaType()
 
@@ -170,7 +171,7 @@ func computeBlobChain(ctx context.Context, sr *immutableRef, createIfNeeded bool
 					}
 				}
 				if enableOverlay {
-					computed, ok, err := sr.tryComputeOverlayBlob(ctx, lower, upper, mediaType, sr.ID(), compressorFunc)
+					computed, ok, err := sr.tryComputeOverlayBlob(ctx, lower, upper, "ughughugh", sr.ID(), compressorFunc)
 					if !ok || err != nil {
 						if !fallback {
 							if !ok {
@@ -194,7 +195,7 @@ func computeBlobChain(ctx context.Context, sr *immutableRef, createIfNeeded bool
 					// This case can be happen on containerd worker + non-overlayfs snapshotter (e.g. native).
 					// See also: https://github.com/containerd/containerd/issues/4263
 					desc, err = walking.NewWalkingDiff(sr.cm.ContentStore).Compare(ctx, lower, upper,
-						diff.WithMediaType(mediaType),
+						diff.WithMediaType("mediaType1"),
 						diff.WithReference(sr.ID()),
 						diff.WithCompressor(compressorFunc),
 					)
@@ -205,7 +206,7 @@ func computeBlobChain(ctx context.Context, sr *immutableRef, createIfNeeded bool
 
 				if desc.Digest == "" {
 					desc, err = sr.cm.Differ.Compare(ctx, lower, upper,
-						diff.WithMediaType(mediaType),
+						diff.WithMediaType("mediaType2"),
 						diff.WithReference(sr.ID()),
 						diff.WithCompressor(compressorFunc),
 					)
@@ -236,7 +237,7 @@ func computeBlobChain(ctx context.Context, sr *immutableRef, createIfNeeded bool
 				} else if mediaType == ocispecs.MediaTypeImageLayer {
 					desc.Annotations[labels.LabelUncompressed] = desc.Digest.String()
 				} else {
-					return struct{}{}, errors.Errorf("unknown layer compression type")
+					// return struct{}{}, errors.Errorf("unknown layer compression type")
 				}
 
 				if err := sr.setBlob(ctx, desc); err != nil {

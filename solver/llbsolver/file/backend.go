@@ -2,6 +2,7 @@ package file
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -133,6 +134,7 @@ func rmPath(root, src string, allowNotFound bool) error {
 }
 
 func docopy(ctx context.Context, src, dest string, action pb.FileActionCopy, u *copy.User, idmap *idtools.IdentityMapping) error {
+	fmt.Println("DOCOPY MOMOD")
 	srcPath, err := cleanPath(action.Src)
 	if err != nil {
 		return errors.Wrap(err, "cleaning source path")
@@ -144,7 +146,7 @@ func docopy(ctx context.Context, src, dest string, action pb.FileActionCopy, u *
 	if !action.CreateDestPath {
 		p, err := fs.RootPath(dest, filepath.Join("/", action.Dest))
 		if err != nil {
-			return err
+			return errors.Wrap(err, "create dest path")
 		}
 		if _, err := os.Lstat(filepath.Dir(p)); err != nil {
 			return errors.Wrapf(err, "failed to stat %s", action.Dest)
@@ -158,6 +160,7 @@ func docopy(ctx context.Context, src, dest string, action pb.FileActionCopy, u *
 
 	ch, err := mapUserToChowner(u, idmap)
 	if err != nil {
+		fmt.Println("map user to chowner error")
 		return err
 	}
 
@@ -203,6 +206,7 @@ func docopy(ctx context.Context, src, dest string, action pb.FileActionCopy, u *
 			}
 		}
 		if err := copy.Copy(ctx, src, s, dest, destPath, opt...); err != nil {
+			fmt.Println("DOCOPY MOMOD ERROR")
 			return err
 		}
 	}
@@ -286,6 +290,7 @@ func (fb *Backend) Rm(ctx context.Context, m fileoptypes.Mount, action pb.FileAc
 }
 
 func (fb *Backend) Copy(ctx context.Context, m1, m2, user, group fileoptypes.Mount, action pb.FileActionCopy) error {
+	fmt.Println("Backed copy")
 	mnt1, ok := m1.(*Mount)
 	if !ok {
 		return errors.Errorf("invalid mount type %T", m1)
@@ -298,6 +303,7 @@ func (fb *Backend) Copy(ctx context.Context, m1, m2, user, group fileoptypes.Mou
 	lm := snapshot.LocalMounter(mnt1.m)
 	src, err := lm.Mount()
 	if err != nil {
+		fmt.Println("lm mount")
 		return err
 	}
 	defer lm.Unmount()
@@ -305,15 +311,18 @@ func (fb *Backend) Copy(ctx context.Context, m1, m2, user, group fileoptypes.Mou
 	lm2 := snapshot.LocalMounter(mnt2.m)
 	dest, err := lm2.Mount()
 	if err != nil {
+		fmt.Println("lm2 mount")
 		return err
 	}
 	defer lm2.Unmount()
 
 	u, err := fb.readUserWrapper(action.Owner, user, group)
 	if err != nil {
+		fmt.Println("read user wrapper")
 		return err
 	}
 
+	fmt.Println("dpoing copy")
 	return docopy(ctx, src, dest, action, u, mnt2.m.IdentityMapping())
 }
 

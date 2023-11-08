@@ -1,6 +1,7 @@
 package snapshot
 
 import (
+	"fmt"
 	"os"
 	"syscall"
 
@@ -17,6 +18,7 @@ func (lm *localMounter) Mount() (string, error) {
 	if lm.mounts == nil && lm.mountable != nil {
 		mounts, release, err := lm.mountable.Mount()
 		if err != nil {
+			fmt.Printf("HERE %T\n", lm.mountable)
 			return "", err
 		}
 		lm.mounts = mounts

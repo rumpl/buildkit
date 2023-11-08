@@ -188,6 +188,7 @@ func (e *imageExporterInstance) Config() *exporter.Config {
 }
 
 func (e *imageExporterInstance) Export(ctx context.Context, src *exporter.Source, sessionID string) (_ map[string]string, descref exporter.DescriptorReference, err error) {
+	fmt.Println("EXPORTING TO IMAGE")
 	if src.Metadata == nil {
 		src.Metadata = make(map[string][]byte)
 	}
@@ -235,6 +236,7 @@ func (e *imageExporterInstance) Export(ctx context.Context, src *exporter.Source
 	}
 
 	if e.opts.ImageName != "" {
+		fmt.Println("IMAGE NAME", e.opts.ImageName)
 		targetNames := strings.Split(e.opts.ImageName, ",")
 		for _, targetName := range targetNames {
 			if e.opt.Images != nil && e.store {
@@ -439,6 +441,7 @@ func (e *imageExporterInstance) unpackImage(ctx context.Context, img images.Imag
 		return err
 	}
 
+	fmt.Println("GOT LAYERS", layers)
 	// get containerd snapshotter
 	ctrdSnapshotter, release := snapshot.NewContainerdSnapshotter(snapshotter)
 	defer release()

@@ -382,6 +382,7 @@ func (e *ExecOp) Exec(ctx context.Context, g session.Group, inputs []solver.Resu
 		}
 	}()
 
+	fmt.Println("ASDFASDFASDFASDFASDFASDFASDFASD")
 	rec, execErr := e.exec.Run(ctx, "", p.Root, p.Mounts, executor.ProcessInfo{
 		Meta:   meta,
 		Stdin:  nil,

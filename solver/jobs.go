@@ -917,7 +917,10 @@ func (s *sharedOp) Exec(ctx context.Context, inputs []Result) (outputs []Result,
 			notifyCompleted(retErr, false)
 		}()
 
+		fmt.Println("OP OP OP")
+		fmt.Printf("%T\n", op)
 		res, err := op.Exec(ctx, s.st, inputs)
+		fmt.Println(res, err)
 		complete := true
 		if err != nil {
 			select {

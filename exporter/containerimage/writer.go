@@ -60,6 +60,7 @@ type ImageWriter struct {
 }
 
 func (ic *ImageWriter) Commit(ctx context.Context, inp *exporter.Source, sessionID string, opts *ImageCommitOpts) (*ocispecs.Descriptor, error) {
+	fmt.Println("ImageWriter.Commit")
 	if _, ok := inp.Metadata[exptypes.ExporterPlatformsKey]; len(inp.Refs) > 0 && !ok {
 		return nil, errors.Errorf("unable to export multiple refs, missing platforms mapping")
 	}
@@ -124,6 +125,7 @@ func (ic *ImageWriter) Commit(ctx context.Context, inp *exporter.Source, session
 			ref = inp.Ref
 		}
 
+		fmt.Println("1")
 		remotes, err := ic.exportLayers(ctx, opts.RefCfg, session.NewGroup(sessionID), ref)
 		if err != nil {
 			return nil, err
@@ -173,6 +175,7 @@ func (ic *ImageWriter) Commit(ctx context.Context, inp *exporter.Source, session
 		refs = append(refs, r)
 	}
 
+	fmt.Println("2")
 	remotes, err := ic.exportLayers(ctx, opts.RefCfg, session.NewGroup(sessionID), refs...)
 	if err != nil {
 		return nil, err
@@ -304,6 +307,7 @@ func (ic *ImageWriter) Commit(ctx context.Context, inp *exporter.Source, session
 }
 
 func (ic *ImageWriter) exportLayers(ctx context.Context, refCfg cacheconfig.RefConfig, s session.Group, refs ...cache.ImmutableRef) ([]solver.Remote, error) {
+	fmt.Println("ImageWriter.exportLayers")
 	attr := []attribute.KeyValue{
 		attribute.String("exportLayers.compressionType", refCfg.Compression.Type.String()),
 		attribute.Bool("exportLayers.forceCompression", refCfg.Compression.Force),
@@ -318,17 +322,28 @@ func (ic *ImageWriter) exportLayers(ctx context.Context, refCfg cacheconfig.RefC
 
 	out := make([]solver.Remote, len(refs))
 
+	fmt.Println(len(refs))
 	for i, ref := range refs {
+		fmt.Println(ref)
 		func(i int, ref cache.ImmutableRef) {
 			if ref == nil {
 				return
 			}
 			eg.Go(func() error {
+				ref.ID()
+				d := progress.OneOff(ctx, fmt.Sprintf("exporting layer %d/%d %s", i+1, len(refs), ref.ID()))
+				// TODO: rumpl: here is where it gets the remote layer from the cache
 				remotes, err := ref.GetRemotes(ctx, true, refCfg, false, s)
 				if err != nil {
+					d(err)
 					return err
 				}
+				d(nil)
 				remote := remotes[0]
+				fmt.Println("REMPTE MOTE OASDF")
+				for _, d := range remote.Descriptors {
+					fmt.Printf("%#v\n", d)
+				}
 				out[i] = *remote
 				return nil
 			})

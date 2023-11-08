@@ -746,6 +746,7 @@ func (sr *immutableRef) ociDesc(ctx context.Context, dhs DescHandlers, preferNon
 		desc.Annotations["buildkit/createdat"] = string(createdAt)
 	}
 
+	// desc.MediaType = "djordje"
 	return desc, nil
 }
 
@@ -1700,9 +1701,11 @@ func (sm *sharableMountable) Mount() (_ []mount.Mount, _ func() error, retErr er
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
 
+	fmt.Printf("mountable: %T\n", sm.Mountable)
 	if sm.curMounts == nil {
 		mounts, release, err := sm.Mountable.Mount()
 		if err != nil {
+			fmt.Println("ASDFASDFASDFASDFASDFASDFASDFSDF")
 			return nil, nil, err
 		}
 		defer func() {
@@ -1723,6 +1726,7 @@ func (sm *sharableMountable) Mount() (_ []mount.Mount, _ func() error, retErr er
 		}
 		dir, err := os.MkdirTemp(sm.mountPoolRoot, "buildkit")
 		if err != nil {
+			fmt.Println("MKDIRTEMP ERROR")
 			return nil, nil, err
 		}
 		defer func() {
@@ -1733,10 +1737,13 @@ func (sm *sharableMountable) Mount() (_ []mount.Mount, _ func() error, retErr er
 		if userns.RunningInUserNS() {
 			mounts, err = rootlessmountopts.FixUp(mounts)
 			if err != nil {
+				fmt.Println("FIXUP ERROR")
 				return nil, nil, err
 			}
 		}
+		fmt.Println(mounts, dir)
 		if err := mount.All(mounts, dir); err != nil {
+			fmt.Println("MOUNT ALL ERROR")
 			return nil, nil, err
 		}
 		defer func() {
@@ -1778,9 +1785,11 @@ func (sm *sharableMountable) Mount() (_ []mount.Mount, _ func() error, retErr er
 		// no mount exist. release the current mount.
 		sm.curMounts = nil
 		if err := mount.Unmount(sm.curMountPoint, 0); err != nil {
+			fmt.Println("UNMOUNT ERROR")
 			return err
 		}
 		if err := sm.curRelease(); err != nil {
+			fmt.Println("CUR RELEASE ERROR")
 			return err
 		}
 		return os.Remove(sm.curMountPoint)
